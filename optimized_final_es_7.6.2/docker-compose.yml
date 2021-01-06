@@ -1,0 +1,34 @@
+version: "2"
+services:
+    app:
+        image: test:es7.6.2
+        container_name: "app.kensium.tk"
+        restart: always
+        networks:
+            - web
+        tty: true
+        ports:
+            - "80:80"
+            - "5672:5672"
+            - "6379:6379"
+            - "9200:9200"
+            - "15672:15672"       
+        volumes:
+            - ~/composer_cache:/root/.composer/cache
+            - ./logs/nginx:/var/log/nginx:rw
+            - ./logs/php7:/var/log/php7:rw
+            - ./logs/varnish:/var/log/varnish:rw
+            - ./logs/redis:/var/log/redis:rw
+            - ./html:/var/www/html
+            - ./database:/var/lib/mysql
+            - ./esdata:/usr/share/elasticsearch/data
+        networks:
+          app:
+            ipv4_address: 12.0.0.2
+networks:
+  app: # Here we are customizing a network millervet, we can use external if we want to use an existing network.
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 12.0.0.0/16
+          gateway: 12.0.0.1
